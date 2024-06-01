@@ -47,6 +47,7 @@ async def rename(path: str) -> None:
 
 
 async def get_files() -> None:
+    print("Collecting data for the last 200 days")
     tasks = []
     counter = 0
     async with aiohttp.ClientSession() as session:

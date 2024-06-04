@@ -34,6 +34,10 @@ async def extracting(response: ClientResponse, counter: int) -> None:
         zipfile.extract(filename, f"{cwd}/{c.FIFTY_DAYS_PATH}")
         path = f"{cwd}/{c.FIFTY_DAYS_PATH}/{filename}"
         await rename(path)
+    if counter < 100:
+        zipfile.extract(filename, f"{cwd}/{c.HUNDRED_DAYS_PATH}")
+        path = f"{cwd}/{c.HUNDRED_DAYS_PATH}/{filename}"
+        await rename(path)
 
 async def rename(path: str) -> None:
     date_str = path.split('cm')[1][:-8]

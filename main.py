@@ -1,21 +1,24 @@
 import os
 import xlsxwriter
 import constants as c
-from watchlist_operations import sma
+from data_operations import reload
+from watchlist_operations import excel_file
 
 def main():
     os.system('cls')
-
+    reload()
     results_path = os.path.join(os.getcwd(), c.RESULTS_FILE)
-    if not os.path.isfile(results_path):
-        workbook = xlsxwriter.Workbook(c.RESULTS_FILE)
-        workbook.add_worksheet('5 SMA')
-        workbook.add_worksheet('10 SMA')
-        workbook.add_worksheet('20 SMA')
-        workbook.add_worksheet('50 SMA')
-        workbook.close()
+    if os.path.isfile(results_path):
+        os.remove(results_path)
+    
+    workbook = xlsxwriter.Workbook(c.RESULTS_FILE)
+    workbook.add_worksheet('5 SMA')
+    workbook.close()
 
     for directory in c.DIRECTORIES:
-        sma(directory)
+        excel_file(directory)
 
     os.system('cls')
+
+if __name__ == "__main__":
+    main()

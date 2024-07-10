@@ -83,7 +83,6 @@ def get_tasks(session: aiohttp.ClientSession):
 def reload():
     cwd = os.getcwd()
     data_folder = os.path.join(cwd, "DATA")
-    print(data_folder)
     if os.path.isdir(data_folder):
         shutil.rmtree(data_folder)
     print("Downloading new fresh set of files")

@@ -2,6 +2,7 @@ import os
 import constants as c
 import pandas as pd
 from pandas import DataFrame
+import time
 
 
 def excel_file(directory: str) -> None:
@@ -15,8 +16,7 @@ def excel_file(directory: str) -> None:
 
     sma_dictionary = sma(directory)
     current = current.query("SERIES == 'EQ'")
-    current.insert(len(current.columns), f'{
-                   time_period} SMA', value=current['SYMBOL'].map(sma_dictionary))
+    current.insert(len(current.columns), f'{time_period} SMA', value=current['SYMBOL'].map(sma_dictionary))
     file_name = f"{sheet_name}.xlsx"
 
     write_results(current, time_period, directory)
@@ -44,12 +44,56 @@ def write_results(dataframe: DataFrame, range: int, directory: str) -> None:
         col_1 = col_count - 1
 
         # Apply the filter condition
-        dataframe = dataframe[(1.005 * dataframe.iloc[:, col_2] > dataframe.iloc[:, col_1]) & (dataframe.iloc[:, col_1] > 0.995 * dataframe.iloc[:, col_2])]
+        # dataframe = dataframe[(1.005 * dataframe.iloc[:, col_2] > dataframe.iloc[:, col_1]) & (dataframe.iloc[:, col_1] > 0.995 * dataframe.iloc[:, col_2])]
 
         print("Writing")
     with pd.ExcelWriter(c.RESULTS_FILE, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
         dataframe.to_excel(writer, f"{range} SMA", index=False)
 
+def filtering():
+    df = pd.read_excel(c.RESULTS_FILE, sheet_name=-1)
+    print(df)
+    condition = (
+        (((df['5 SMA'] >= 0.995 * df['10 SMA']) & (df['5 SMA'] <= 1.005 * df['10 SMA'])) &
+        ((df['5 SMA'] >= 0.995 * df['20 SMA']) & (df['5 SMA'] <= 1.005 * df['20 SMA'])) &
+        ((df['5 SMA'] >= 0.995 * df['50 SMA']) & (df['5 SMA'] <= 1.005 * df['50 SMA'])) &
+        ((df['5 SMA'] >= 0.995 * df['100 SMA']) & (df['5 SMA'] <= 1.005 * df['100 SMA'])) &
+        ((df['5 SMA'] >= 0.995 * df['200 SMA']) & (df['5 SMA'] <= 1.005 * df['200 SMA']))) |
+        
+        (((df['10 SMA'] >= 0.995 * df['5 SMA']) & (df['10 SMA'] <= 1.005 * df['5 SMA'])) &
+        ((df['10 SMA'] >= 0.995 * df['20 SMA']) & (df['10 SMA'] <= 1.005 * df['20 SMA'])) &
+        ((df['10 SMA'] >= 0.995 * df['50 SMA']) & (df['10 SMA'] <= 1.005 * df['50 SMA'])) &
+        ((df['10 SMA'] >= 0.995 * df['100 SMA']) & (df['10 SMA'] <= 1.005 * df['100 SMA'])) &
+        ((df['10 SMA'] >= 0.995 * df['200 SMA']) & (df['10 SMA'] <= 1.005 * df['200 SMA']))) |
+        
+        (((df['20 SMA'] >= 0.995 * df['5 SMA']) & (df['20 SMA'] <= 1.005 * df['5 SMA'])) &
+        ((df['20 SMA'] >= 0.995 * df['10 SMA']) & (df['20 SMA'] <= 1.005 * df['10 SMA'])) &
+        ((df['20 SMA'] >= 0.995 * df['50 SMA']) & (df['20 SMA'] <= 1.005 * df['50 SMA'])) &
+        ((df['20 SMA'] >= 0.995 * df['100 SMA']) & (df['20 SMA'] <= 1.005 * df['100 SMA'])) &
+        ((df['20 SMA'] >= 0.995 * df['200 SMA']) & (df['20 SMA'] <= 1.005 * df['200 SMA']))) |
+        
+        (((df['50 SMA'] >= 0.995 * df['5 SMA']) & (df['50 SMA'] <= 1.005 * df['5 SMA'])) &
+        ((df['50 SMA'] >= 0.995 * df['10 SMA']) & (df['50 SMA'] <= 1.005 * df['10 SMA'])) &
+        ((df['50 SMA'] >= 0.995 * df['20 SMA']) & (df['50 SMA'] <= 1.005 * df['20 SMA'])) &
+        ((df['50 SMA'] >= 0.995 * df['100 SMA']) & (df['50 SMA'] <= 1.005 * df['100 SMA'])) &
+        ((df['50 SMA'] >= 0.995 * df['200 SMA']) & (df['50 SMA'] <= 1.005 * df['200 SMA']))) |
+        
+        (((df['100 SMA'] >= 0.995 * df['5 SMA']) & (df['100 SMA'] <= 1.005 * df['5 SMA'])) &
+        ((df['100 SMA'] >= 0.995 * df['10 SMA']) & (df['100 SMA'] <= 1.005 * df['10 SMA'])) &
+        ((df['100 SMA'] >= 0.995 * df['20 SMA']) & (df['100 SMA'] <= 1.005 * df['20 SMA'])) &
+        ((df['100 SMA'] >= 0.995 * df['50 SMA']) & (df['100 SMA'] <= 1.005 * df['50 SMA'])) &
+        ((df['100 SMA'] >= 0.995 * df['200 SMA']) & (df['100 SMA'] <= 1.005 * df['200 SMA']))) |
+        
+        (((df['200 SMA'] >= 0.995 * df['5 SMA']) & (df['200 SMA'] <= 1.005 * df['5 SMA'])) &
+        ((df['200 SMA'] >= 0.995 * df['10 SMA']) & (df['200 SMA'] <= 1.005 * df['10 SMA'])) &
+        ((df['200 SMA'] >= 0.995 * df['20 SMA']) & (df['200 SMA'] <= 1.005 * df['20 SMA'])) &
+        ((df['200 SMA'] >= 0.995 * df['50 SMA']) & (df['200 SMA'] <= 1.005 * df['50 SMA'])) &
+        ((df['200 SMA'] >= 0.995 * df['100 SMA']) & (df['200 SMA'] <= 1.005 * df['100 SMA'])))
+    )
+    
+    # Apply the filter to the dataframe
+    df = df[condition]
+    df.to_excel(c.RESULTS_FILE)
 
 def sma(directory: str):
     dataframes = []
@@ -61,6 +105,9 @@ def sma(directory: str):
         df = pd.read_csv(file_path)
         df = df.query('SERIES == "EQ"')
         dataframes.append(df[['SYMBOL', 'CLOSE']])
+
+    print(len(files_list))
+    time.sleep(10)
 
     combined_df = pd.concat(dataframes)
     combined_df = combined_df.groupby('SYMBOL')['CLOSE'].mean()

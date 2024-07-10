@@ -2,7 +2,7 @@ import os
 import xlsxwriter
 import constants as c
 from data_operations import reload
-from watchlist_operations import excel_file
+from watchlist_operations import excel_file, filtering
 
 def main():
     os.system('cls')
@@ -17,7 +17,7 @@ def main():
 
     for directory in c.DIRECTORIES:
         excel_file(directory)
-
+    filtering()
     os.system('cls')
 
 if __name__ == "__main__":
